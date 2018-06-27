@@ -14,6 +14,6 @@
 
 void	display_error_message(char *message)
 {
-	ft_putstr(message);
+	ft_putst(message);
 	exit(1);
 }

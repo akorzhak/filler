@@ -21,6 +21,8 @@
 
 # define X 1
 # define O 0
+# define BOARD_OFFSET 4
+# define PIECE_OFFSET 0
 # define USAGE "USAGE: ./resources/filler_vm -f resources/maps/[map00/map01/"
 				"map02/map03] -p[1/2] ./[name].filler -p[2/1] ./resources/"
 				"players/[name].filler"
