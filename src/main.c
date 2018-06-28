@@ -12,25 +12,23 @@
 
 #include "filler.h"
 
-void	skip_the_line(char **line)
+int		skip_the_line(char **line)
 {
-	get_next_line(0, line);
+	if (get_next_line(0, line) <= 0)
+		return (0);
 	ft_strdel(line);
+	return (1);
 }
 
 void	free_the_grid_data(t_grid *grid, int offset)
 {
-	if (grid->data && offset == BOARD_OFFSET)
-	{
-		ft_bzero(grid->data, sizeof(grid->data)); //clean 2d array
-	}
-	else if (grid->data && offset == PIECE_OFFSET)
+	if (grid->data && offset == PIECE_OFFSET)
 	{
 		ft_memdel((void **)&grid->data); //grid->data ???
 	}
 	if (!grid->data)
 	{
-		grid->data = (char **)malloc(sizeof(char *) * (grid->rows + 1));
+		grid->data = (char **)ft_memalloc(sizeof(char *) * (grid->rows + 1));
 	}
 }
 
@@ -43,7 +41,8 @@ void	fill_the_grid_data(char **line, t_grid *grid, int offset)
 	while (i < grid->rows)
 	{
 		get_next_line(0, line);
-		grid->data[i] = ft_strdup(*(line + offset));
+		offset == PIECE_OFFSET ? grid->data[i] = ft_strdup(*line) : 0;
+		offset == BOARD_OFFSET ? ft_strcpy(grid->data[i], *(line + offset)) : 0;
 		ft_strdel(line);
 		i++;
 	}
@@ -52,7 +51,7 @@ void	fill_the_grid_data(char **line, t_grid *grid, int offset)
 
 void 	identify_grid_dimensions(char **line, t_grid *grid)
 {
-	grid = (t_grid *)malloc(sizeof(t_grid));
+	grid = (t_grid *)ft_memalloc(sizeof(t_grid));
 	while (!ft_isdigit(**line))
 	{
 		(*line)++;
@@ -66,19 +65,108 @@ void 	identify_grid_dimensions(char **line, t_grid *grid)
 	ft_strdel(line); //Plateau
 }
 
-int		handle_game_loop(char **line, t_filler *filler)
+void	init_distance_board(t_filler *filler)
 {
-	skip_the_line(line);
-	fill_the_grid_data(line, &filler->board, BOARD_OFFSET); //Next - Piece 3 6
-	identify_grid_dimensions(line, &filler->piece);
-	fill_the_grid_data(line, &filler->piece, PIECE_OFFSET); //maybe filler->&piece ???
-	//possible_move = get_possible_moves(line, filler);
-	//if (!possible_move)
-	//{
-		exit(0);
-	//}
-	//make_a_move(possible_move);
+	int x;
+	int y;
+
+	x = 0;
+	y = 0;
+	filler->dist_board = (int **)ft_memalloc(sizeof(int *)
+							* (filler->board.rows + 1));
+	while (y < filler->board->rows)
+	{
+		filler->dist_board[y] = (int *)ft_memalloc(sizeof(int) 
+								* filler->board.columns + 1);
+		y++;
+	}
+}
+
+int 	calculate_distance(int x, int y, t_filler *filler)
+{
+	int dist;
+	int min_dist;
+	int enemy_x;
+	int enemy_y;
+
+	min_dist = 0;
+	enemy_y = 0;
+	while (enemy_y < filler->board.rows)
+	{
+		enemy_x = 0;
+		while (enemy_x < filler->board.columns)
+		{
+			if (filler->board.data[enemy_y][enemy_x] == filler->enemy_bot)
+			{
+				dist = abs(x - enemy_x) + abs(y - enemy_y);
+				(dist < min_dist) ? min_dist = dist : 0;
+			}
+			enemy_x++;
+		}
+		enemy_y++;
+	}
+	return (min_dist);
+}
+
+void	form_manhattan_distance_board(t_filler *filler)
+{
+	int x;
+	int y;
+
+	y = 0;
+	while (y < filler->board.rows)
+	{
+		x = 0;
+		while (x < filler->board.columns)
+		{
+			filler->dist_board[y][x] = calculate_distance(x, y, filler);
+			x++;
+		}
+		y++;
+	}
+}
+
+void	attempt_to_place_a_piece(t_filler *filler, int x, int y) //to_do
+{
+
+}
+
+int 	place_a_piece(t_filler *filler)
+{
+	int X;
+	int Y;
+	int x;
+	int y;
+
+	y = 0;
+	while (y < filler->board.rows)
+	{
+		x = 0;
+		while (x < filler->board.columns)
+		{
+			if (filler->piece.rows + y <= filler->board.rows
+				&& filler->piece.columns + x <= filler->board.columns)
+			attempt_to_place_a_piece(filler, x, y);
+			x++;
+		}
+		y++;
+	}
+
 	return (1);
+}
+
+void		handle_game_loop(char **line, t_filler *filler)
+{
+	while (skip_the_line(line))
+	{
+		fill_the_grid_data(line, &filler->board, BOARD_OFFSET); //Next - Piece 3 6
+		identify_grid_dimensions(line, &filler->piece);
+		fill_the_grid_data(line, &filler->piece, PIECE_OFFSET); //maybe filler->&piece ???
+		form_manhattan_distance_board(filler);
+		if (!place_a_piece(filler))
+			break ;
+	}	
+	return (0);
 }
 
 void 	identify_bots(char **line, t_filler *filler)
@@ -88,8 +176,8 @@ void 	identify_bots(char **line, t_filler *filler)
 	{
 		if (*line[10] == '1')
 		{
-			filler->my_bot = (ft_strstr(*line, MY_BOT_NAME) ? O : X);
-			filler->enemy_bot = ((filler->my_bot == O) ? X : O);
+			filler->my_bot = (ft_strstr(*line, MY_BOT_NAME) ? 'O' : 'X');
+			filler->enemy_bot = ((filler->my_bot == 'O') ? 'X' : 'O');
 		}
 		ft_strdel(line);
 	}
@@ -108,7 +196,7 @@ int		main(void)
 	init_filler(&filler);
 	identify_bots(&line, &filler); //line at Plateau
 	identify_grid_dimensions(&line, &filler.board);
-	while (handle_game_loop(&line, &filler))
-		continue ;
+	init_distance_board(filler);
+	handle_game_loop(&line, &filler);
 	return (0);
 }

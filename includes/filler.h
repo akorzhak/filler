@@ -18,8 +18,6 @@
 # include <fcntl.h>
 # include <math.h>
 
-# define X 1
-# define O 0
 # define BOARD_OFFSET 4
 # define PIECE_OFFSET 0
 # define USAGE "USAGE: ./resources/filler_vm -f resources/maps/[map00/map01/\
@@ -40,8 +38,9 @@ typedef struct		s_filler
 {
 	char			my_bot;
 	char			enemy_bot;
-	t_grid			board;
 	t_grid			piece;
+	t_grid			board;
+	int				**dist_board;
 }					t_filler;
 
 int					main(void);
