@@ -1,19 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   messages.c                                         :+:      :+:    :+:   */
+/*   ft_intlen.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: akorzhak <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/06/25 06:05:43 by akorzhak          #+#    #+#             */
-/*   Updated: 2018/06/25 06:05:46 by akorzhak         ###   ########.fr       */
+/*   Created: 2018/01/07 16:51:01 by akorzhak          #+#    #+#             */
+/*   Updated: 2018/01/07 16:51:04 by akorzhak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "filler.h"
+#include "../includes/libftprintf.h"
 
-void	display_error_message(char *message)
+size_t		ft_intlen(unsigned int *str)
 {
-	ft_putstr(message);
-	exit(1);
+	size_t len;
+
+	len = 0;
+	while (str[len])
+		len++;
+	return (len);
 }

@@ -1,19 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   messages.c                                         :+:      :+:    :+:   */
+/*   ft_addflags.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: akorzhak <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/06/25 06:05:43 by akorzhak          #+#    #+#             */
-/*   Updated: 2018/06/25 06:05:46 by akorzhak         ###   ########.fr       */
+/*   Created: 2018/01/10 19:04:25 by akorzhak          #+#    #+#             */
+/*   Updated: 2018/01/10 19:04:27 by akorzhak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "filler.h"
+#include "../includes/libftprintf.h"
 
-void	display_error_message(char *message)
+void	ft_addflags(t_flags *ptr, char **f)
 {
-	ft_putstr(message);
-	exit(1);
+	while (**f)
+	{
+		if (**f == '-')
+			ptr->min = 1;
+		else if (**f == '+')
+		{
+			ptr->plus = 1;
+			ptr->space = 0;
+		}
+		else if (**f == ' ')
+		{
+			if (!ptr->plus)
+				ptr->space = 1;
+		}
+		else if (**f == '#')
+			ptr->sharp = 1;
+		else if (**f == '0')
+			ptr->zero = 1;
+		else
+			return ;
+		(*f)++;
+	}
 }

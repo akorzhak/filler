@@ -13,9 +13,8 @@
 #ifndef FILLER_H
 # define FILLER_H
 
-# include "libft.h"
+# include "libftprintf.h"
 # include "mlx.h"
-# include <stdio.h>
 # include <fcntl.h>
 # include <math.h>
 
@@ -23,17 +22,17 @@
 # define O 0
 # define BOARD_OFFSET 4
 # define PIECE_OFFSET 0
-# define USAGE "USAGE: ./resources/filler_vm -f resources/maps/[map00/map01/"
-				"map02/map03] -p[1/2] ./[name].filler -p[2/1] ./resources/"
-				"players/[name].filler"
+# define USAGE "USAGE: ./resources/filler_vm -f resources/maps/[map00/map01/\
+				map02/map03] -p[1/2] ./[name].filler -p[2/1] ./resources/\
+				players/[name].filler"
 # define ERROR "Something went wrong"
 # define FIRST_LINES "$$$ exec p"
 # define MY_BOT_NAME "akorzhak.filler"
 
 typedef struct		s_grid
 {
-	int				width;
-	int				height;
+	int				rows;
+	int				columns;
 	char			**data;
 }					t_grid;
 
@@ -45,9 +44,8 @@ typedef struct		s_filler
 	t_grid			piece;
 }					t_filler;
 
-int					main(int argc, char **argv);
+int					main(void);
 void				display_error_message(char *message);
 void				display_message(char *message);
-int					exit_x(t_ptr *p);
 
 #endif

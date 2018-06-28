@@ -10,48 +10,50 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME = akorzhak.filler
+NAME = libftprintf.a
 
 C = gcc
 
 CFLAG = -Wall -Wextra -Werror
 
-INC = -I ./includes -I ./ft_printf/includes
+LIBDIR = libft
 
-PRINTFDIR = ft_printf/
-
-PRINTF = $(PRINTFDIR)libftprintf.a
-
-LIBS = -L ./ft_printf -lftprintf
+LIB = $(LIBDIR)/libft.a
 
 SRCDIR = src
 
-PLAYERSDIR = ./resources/players/
+SRC = ft_printf.c ft_addsize.c ft_addflags.c ft_printarg.c ft_printnb.c\
+	ft_get_unb.c ft_get_snb.c ft_unicode.c ft_intlen.c ft_printc.c\
+	ft_prints.c ft_zero_plus_space.c ft_print_percent.c ft_put.c ft_min.c
 
-SRC = main.c messages.c
+IDIR = includes
+
+INC = $(IDIR)/libftprintf.h
 
 OBJ = $(SRC:.c=.o)
 
 .PHONY: all clean fclean
 
 %.o: $(SRCDIR)/%.c
-	@$(C) $(CFLAG) -c $< $(INC)
+	@$(C) -c $<
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	@make -C $(PRINTFDIR)
-	@$(C) $(CFLAG) -o $(NAME) $(OBJ) $(LIBS)
-	@cp $(NAME) $(PLAYERSDIR)
-	@echo akorzhak.filler compilation is \done
+	@make -C $(LIBDIR)
+	@cp $(LIB) $(NAME)
+	@ar rc $(NAME) $(OBJ)
+	@ranlib $(NAME)
+	@echo libftprintf.a is created
+
 clean:
-	@make clean -C $(PRINTFDIR)
+	@make clean -C $(LIBDIR)
 	@/bin/rm -f $(OBJ) *~
-	@echo object files have been cleaned
+	@echo object files are removed
 
 fclean: clean
-	@make fclean -C $(PRINTFDIR)
+	@make fclean -C $(LIBDIR)
 	@/bin/rm -f $(NAME)
-	@echo akorzhak.filler has been removed
+	@echo libftprintf.a is removed
 
 re: fclean all

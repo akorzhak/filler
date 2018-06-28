@@ -1,19 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   messages.c                                         :+:      :+:    :+:   */
+/*   ft_put.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: akorzhak <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/06/25 06:05:43 by akorzhak          #+#    #+#             */
-/*   Updated: 2018/06/25 06:05:46 by akorzhak         ###   ########.fr       */
+/*   Created: 2018/02/17 14:45:17 by akorzhak          #+#    #+#             */
+/*   Updated: 2018/02/17 14:45:24 by akorzhak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "filler.h"
+#include "../includes/libftprintf.h"
 
-void	display_error_message(char *message)
+int				ft_put(char c, int nb)
 {
-	ft_putstr(message);
-	exit(1);
+	int		i;
+
+	i = nb;
+	while (nb--)
+		write(1, &c, 1);
+	return (i);
 }
