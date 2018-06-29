@@ -45,9 +45,8 @@ typedef struct		s_filler
 {
 	char			my_bot;
 	char			enemy_bot;
-	char			first_read;
-	t_grid			piece;
-	t_grid			board;
+	t_grid			*piece;
+	t_grid			*board;
 	int				**dist_board;
 	t_coordinate	coord;
 }					t_filler;

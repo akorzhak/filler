@@ -12,18 +12,18 @@
 
 #include "filler.h"
 
-void	skip_two_lines(char **line)
-{
-	skip_the_line(line);
-	skip_the_line(line);
-}
-
 int		skip_the_line(char **line)
 {
 	if (get_next_line(0, line) <= 0)
 		return (0);
 	ft_strdel(line);
 	return (1);
+}
+
+void	skip_two_lines(char **line)
+{
+	skip_the_line(line);
+	skip_the_line(line);
 }
 
 void	free_the_grid_data(t_grid *grid)
@@ -35,7 +35,7 @@ void	free_the_grid_data(t_grid *grid)
 	{
 		while (i < grid->columns)
 		{
-			ft_strdel(&grid->data[i])
+			ft_strdel(&grid->data[i]);
 			i++;
 		}
 		ft_memdel((void **)&grid->data); //grid->data ???
@@ -45,6 +45,7 @@ void	free_the_grid_data(t_grid *grid)
 void	fill_the_grid_data(char **line, t_grid *grid, int offset)
 {
 	int i;
+	static char first_read = 1;
 
 	i = 0;
 	if (offset == PIECE_OFFSET)
@@ -52,7 +53,7 @@ void	fill_the_grid_data(char **line, t_grid *grid, int offset)
 		free_the_grid_data(grid);
 		grid->data = (char **)ft_memalloc(sizeof(char *) * (grid->rows + 1));
 	}
-	if (offset == BOARD_OFFSET && !f->first_read)
+	if (offset == BOARD_OFFSET && !first_read)
 		skip_two_lines(line);
 	while (i < grid->rows)
 	{
@@ -63,7 +64,7 @@ void	fill_the_grid_data(char **line, t_grid *grid, int offset)
 		i++;
 	}
 //	grid->data[i] = NULL; //next - <got (X)
-	f->first_read = 0;
+	first_read = 0;
 }
 
 void 	identify_grid_dimensions(char **line, t_grid *grid)
@@ -89,10 +90,10 @@ void	init_distance_board(t_filler *f)
 	int i;
 
 	i = 0;
-	f->dist_board = (int **)ft_memalloc(sizeof(int *) * (f->board.rows + 1));
+	f->dist_board = (int **)ft_memalloc(sizeof(int *) * (f->board->rows + 1));
 	while (i < f->board->rows)
 	{
-		f->dist_board[i] = (int*)ft_memalloc(sizeof(int) * f->board.columns + 1);
+		f->dist_board[i] = (int*)ft_memalloc(sizeof(int) * f->board->columns + 1);
 		i++;
 	}
 }
@@ -106,13 +107,13 @@ int 	calculate_distance(int x, int y, t_filler *f)
 
 	min_dist = 0;
 	enemy_y = 0;
-	while (enemy_y < f->board.rows)
+	while (enemy_y < f->board->rows)
 	{
 		enemy_x = 0;
-		while (enemy_x < f->board.columns)
+		while (enemy_x < f->board->columns)
 		{
-			if (f->board.data[enemy_y][enemy_x] == f->enemy_bot ||
-				f->board.data[enemy_y][enemy_x] == f->enemy_bot + 32)
+			if (f->board->data[enemy_y][enemy_x] == f->enemy_bot ||
+				f->board->data[enemy_y][enemy_x] == f->enemy_bot + 32)
 			{
 				dist = abs(x - enemy_x) + abs(y - enemy_y);
 				(dist < min_dist) ? min_dist = dist : 0;
@@ -130,10 +131,10 @@ void	form_manhattan_distance_board(t_filler *f)
 	int y;
 
 	y = 0;
-	while (y < f->board.rows)
+	while (y < f->board->rows)
 	{
 		x = 0;
-		while (x < f->board.columns)
+		while (x < f->board->columns)
 		{
 			f->dist_board[y][x] = calculate_distance(x, y, f);
 			x++;
@@ -157,10 +158,10 @@ void	calculate_total_piece_distance(t_filler *f, int x, int y)
 
 	i = 0;
 	total_dist = 0;
-	while (i < f->piece.rows)
+	while (i < f->piece->rows)
 	{
 		j = 0;
-		while (j < f->piece.columns)
+		while (j < f->piece->columns)
 		{
 			total_dist += f->dist_board[y + i][x + j];
 			j++;
@@ -179,18 +180,18 @@ void	attempt_to_place_a_piece(t_filler *f, int x, int y)
 
 	i = 0;
 	my_bot_cell = 0;
-	while (i < f->piece.rows)
+	while (i < f->piece->rows)
 	{
 		j = 0;
-		while (j < f->piece.columns && my_bot_cell <= 1)
+		while (j < f->piece->columns && my_bot_cell <= 1)
 		{
-			if (f->piece.data[i][j] == '*')
+			if (f->piece->data[i][j] == '*')
 			{
-				if (f->board.data[y + i][x + j] == f->my_bot 
-					|| f->board.data[y + i][x + j] == f->my_bot + 32)
+				if (f->board->data[y + i][x + j] == f->my_bot 
+					|| f->board->data[y + i][x + j] == f->my_bot + 32)
 					my_bot_cell++;
-				else if (f->board.data[y + i][x + j] == f->enemy_bot
-					|| f->board.data[y + i][x + j] == f->enemy_bot + 32)
+				else if (f->board->data[y + i][x + j] == f->enemy_bot
+					|| f->board->data[y + i][x + j] == f->enemy_bot + 32)
 					return ;
 			}
 			j++;
@@ -206,13 +207,13 @@ int 	place_a_piece(t_filler *f)
 	int y;
 
 	y = 0;
-	while (y < f->board.rows)
+	while (y < f->board->rows)
 	{
 		x = 0;
-		while (x < f->board.columns)
+		while (x < f->board->columns)
 		{
-			if (f->piece.rows + y <= f->board.rows
-				&& f->piece.columns + x <= f->board.columns)
+			if (f->piece->rows + y <= f->board->rows
+				&& f->piece->columns + x <= f->board->columns)
 			attempt_to_place_a_piece(f, x, y);
 			x++;
 		}
@@ -231,14 +232,13 @@ void		handle_game_loop(char **line, t_filler *f)
 {
 	while (skip_the_line(line))
 	{	
-		fill_the_grid_data(line, &f->board, BOARD_OFFSET); //Next - Piece 3 6
-		identify_grid_dimensions(line, &f->piece);
-		fill_the_grid_data(line, &f->piece, PIECE_OFFSET); //maybe f->&piece ???
+		fill_the_grid_data(line, f->board, BOARD_OFFSET); //Next - Piece 3 6
+		identify_grid_dimensions(line, f->piece);
+		fill_the_grid_data(line, f->piece, PIECE_OFFSET); //maybe f->&piece ???
 		form_manhattan_distance_board(f);
 		if (!place_a_piece(f))
 			break ;
-	}	
-	return (0);
+	}
 }
 
 void 	identify_bots(char **line, t_filler *f)
@@ -261,7 +261,6 @@ void	init_filler(t_filler *f)
 	f->coord.x = -1;
 	f->coord.y = -1;
 	f->coord.dist = -1;
-	f->first_read = 1;
 	f->board = (t_grid *)ft_memalloc(sizeof(t_grid));
 	f->piece = (t_grid *)ft_memalloc(sizeof(t_grid));
 }
@@ -271,9 +270,9 @@ void	free_dist_board(t_filler *f)
 	int i;
 
 	i = 0;
-	while (i < f->board.columns)
+	while (i < f->board->columns)
 	{
-		ft_memdel((void **)&f->dist_board[i])
+		ft_memdel((void **)&f->dist_board[i]);
 		i++;
 	}
 	ft_memdel((void **)f->dist_board); //&f->dist_board
@@ -284,10 +283,10 @@ void	free_memory(char **line, t_filler *f)
 	if (*line)
 		ft_strdel(line);
 	free_dist_board(f);
-	free_the_grid_data(&f->board.data);
-	free_the_grid_data(&f->piece.data);
-	ft_memdel((void **)&f->board);
-	ft_memdel((void **)&f->piece);
+	free_the_grid_data(f->board);
+	free_the_grid_data(f->piece);
+	ft_memdel((void **)f->board);
+	ft_memdel((void **)f->piece);
 
 }
 
@@ -298,8 +297,8 @@ int		main(void)
 	
 	init_filler(&f);
 	identify_bots(&line, &f); //line at Plateau
-	identify_grid_dimensions(&line, &f.board);
-	init_distance_board(f);
+	identify_grid_dimensions(&line, f.board);
+	init_distance_board(&f);
 	handle_game_loop(&line, &f);
 	free_memory(&line, &f);
 	return (0);
