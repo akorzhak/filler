@@ -34,13 +34,22 @@ typedef struct		s_grid
 	char			**data;
 }					t_grid;
 
+typedef struct		s_coordinate
+{
+	int				x;
+	int				y;
+	int				dist;
+}					t_coordinate;
+
 typedef struct		s_filler
 {
 	char			my_bot;
 	char			enemy_bot;
+	char			first_read;
 	t_grid			piece;
 	t_grid			board;
 	int				**dist_board;
+	t_coordinate	coord;
 }					t_filler;
 
 int					main(void);
