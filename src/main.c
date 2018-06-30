@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "filler.h"
+#include <stdio.h>
 
 int		skip_the_line(char **line)
 {
@@ -42,47 +43,73 @@ void	free_the_grid_data(t_grid *grid)
 	}
 }
 
-void	fill_the_grid_data(char **line, t_grid *grid, int offset)
-{
+void	fill_the_grid_data(t_grid *grid, int offset)
+{	
 	int i;
+	char *line;
 	static char first_read = 1;
 
+//	line = NULL;
+//	FILE * pfile;
+//	pfile = fopen("temp.txt", "w+");
+	
 	i = 0;
+//	fprintf(pfile, "%d\n", grid->rows);
 	if (offset == PIECE_OFFSET)
-	{
 		free_the_grid_data(grid);
+	if (offset == PIECE_OFFSET || first_read)
 		grid->data = (char **)ft_memalloc(sizeof(char *) * (grid->rows + 1));
-	}
 	if (offset == BOARD_OFFSET && !first_read)
-		skip_two_lines(line);
+		skip_two_lines(&line);
+
 	while (i < grid->rows)
 	{
-		get_next_line(0, line);
-		offset == PIECE_OFFSET ? grid->data[i] = ft_strdup(*line) : 0;
-		offset == BOARD_OFFSET ? ft_strcpy(grid->data[i], *(line + offset)) : 0;
-		ft_strdel(line);
+		get_next_line(0, &line);	
+		if (offset == PIECE_OFFSET || first_read)
+		{
+			grid->data[i] = ft_strdup(line + offset);
+	
+		//	 fprintf(pfile, "%s\n", line + offset);
+		//		fprintf(pfile, "%s\n", grid->data[i]);
+		}
+		else
+		 	ft_strcpy(grid->data[i], (line + offset));
+		ft_strdel(&line);
 		i++;
 	}
-//	grid->data[i] = NULL; //next - <got (X)
-	first_read = 0;
+//	first_read = 0;
+//	 fclose(pfile);	
+	// exit(0);
 }
 
-void 	identify_grid_dimensions(char **line, t_grid *grid)
+void 	identify_grid_dimensions(t_grid *grid)
 {
-	char *str;
+	FILE * pfile;
 
-	str = *line;
-	while (!ft_isdigit(*str))
+	pfile = fopen("temp.txt", "w+");
+
+	fprintf(pfile, "aaaaaaa\n");
+	
+	
+	char *line;
+
+	line = NULL;
+	get_next_line(0, &line);
+	while (!ft_isdigit(*line))
 	{
-		str++;
+		line++;
 	}
-	grid->rows = ft_atoi(str);
-	while (ft_isdigit(*str))
+	grid->rows = ft_atoi(line);
+	while (ft_isdigit(*line))
 	{
-		str++;
+		line++;
 	}
-	grid->columns = ft_atoi(str + 1);
-	ft_strdel(line); //Plateau
+	grid->columns = ft_atoi(line + 1);
+	ft_strdel(&line);
+	fprintf(pfile, "rows: %d columns: %d\n", grid->rows, grid->columns);
+	fclose(pfile);	
+//	ft_strdel(line); //Plateau
+//	exit(0);
 }
 
 void	init_distance_board(t_filler *f)
@@ -127,6 +154,9 @@ int 	calculate_distance(int x, int y, t_filler *f)
 
 void	form_manhattan_distance_board(t_filler *f)
 {
+
+	// FILE * pfile;
+	// pfile = fopen("temp.txt", "w+");
 	int x;
 	int y;
 
@@ -135,12 +165,14 @@ void	form_manhattan_distance_board(t_filler *f)
 	{
 		x = 0;
 		while (x < f->board->columns)
-		{
+		{	
 			f->dist_board[y][x] = calculate_distance(x, y, f);
+		//	fprintf(pfile, "%d\n", f->dist_board[y][x]);	
 			x++;
 		}
 		y++;
 	}
+	// fclose(pfile);	
 }
 
 void	record_new_coordinates(t_filler *f, int x, int y, int dist)
@@ -228,31 +260,42 @@ int 	place_a_piece(t_filler *f)
 	return (1);
 }
 
-void		handle_game_loop(char **line, t_filler *f)
+void		handle_game_loop(t_filler *f)
 {
-	while (skip_the_line(line))
-	{	
-		fill_the_grid_data(line, f->board, BOARD_OFFSET); //Next - Piece 3 6
-		identify_grid_dimensions(line, f->piece);
-		fill_the_grid_data(line, f->piece, PIECE_OFFSET); //maybe f->&piece ???
+	char *line;
+	line = NULL;
+	while (skip_the_line(&line))
+	{
+//		fprintf(pfile, "%s\n", *line);
+//		fclose(pfile);		
+		fill_the_grid_data(f->board, BOARD_OFFSET);
+		
+		
+		identify_grid_dimensions(f->piece);
+		fill_the_grid_data(f->piece, PIECE_OFFSET);
 		form_manhattan_distance_board(f);
 		if (!place_a_piece(f))
 			break ;
 	}
 }
 
-void 	identify_bots(char **line, t_filler *f)
+void 	identify_bots(t_filler *f)
 {
-	*line = NULL;
-	while (get_next_line(0, line) && *line && !ft_strncmp(*line, FIRST_LINES, 9)) //10??
-	{
-		if (*line[10] == '1')
-		{
-			f->my_bot = (ft_strstr(*line, MY_BOT_NAME) ? 'O' : 'X');
-			f->enemy_bot = ((f->my_bot == 'O') ? 'X' : 'O');
-		}
-		ft_strdel(line);
-	}
+	char *line;
+	// FILE * pfile;
+
+	// pfile = fopen("temp.txt", "w+");
+	line = NULL;
+	// get_next_line(0, line);
+	
+	// ft_strdel(line);
+	get_next_line(0, &line);
+	f->my_bot = ((line[10] == '1') ? 'O' : 'X');
+	f->enemy_bot = ((f->my_bot == 'O') ? 'X' : 'O');
+//	fprintf(pfile, "READ: %s\n", *line);
+	ft_strdel(&line);
+	// fprintf(pfile, "READ: %s\n", *line);
+	// fclose(pfile);
 }
 
 void	init_filler(t_filler *f)
@@ -278,28 +321,38 @@ void	free_dist_board(t_filler *f)
 	ft_memdel((void **)f->dist_board); //&f->dist_board
 }
 
-void	free_memory(char **line, t_filler *f)
+void	free_memory(t_filler *f)
 {
-	if (*line)
-		ft_strdel(line);
 	free_dist_board(f);
 	free_the_grid_data(f->board);
 	free_the_grid_data(f->piece);
 	ft_memdel((void **)f->board);
 	ft_memdel((void **)f->piece);
-
 }
 
 int		main(void)
 {
-	char		*line;
+	
+//	pfile = fopen("temp.txt", "w+");
 	t_filler	f;
 	
 	init_filler(&f);
-	identify_bots(&line, &f); //line at Plateau
-	identify_grid_dimensions(&line, f.board);
+	identify_bots(&f); //line at Plateau
+//	fprintf(pfile, "READ: %s\n", line);
+//	fclose(pfile);
+	identify_grid_dimensions(f.board); //Plateau is created and deleted
+	// FILE * pfile;
+	// // FILE * pfile;
+	// pfile = fopen("temp.txt", "w+");
+
+
+	// fprintf(pfile, "%s\n", "aaaaa");
+	// fclose(pfile);
+	exit(0);
 	init_distance_board(&f);
-	handle_game_loop(&line, &f);
-	free_memory(&line, &f);
+	handle_game_loop(&f); //empty line
+	free_memory(&f);
+	
+	
 	return (0);
 }

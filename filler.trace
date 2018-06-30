@@ -1,5 +1,4 @@
-seed = 6961
-./akorzhak.filler: Segfault at 0
+seed = 6742
 ./resources/players/abanlin.filler won
 Score:
-0AGAINST154
+0AGAINST152
