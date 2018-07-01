@@ -14,7 +14,6 @@
 # define FILLER_H
 
 # include "libftprintf.h"
-# include "mlx.h"
 # include <fcntl.h>
 # include <math.h>
 
