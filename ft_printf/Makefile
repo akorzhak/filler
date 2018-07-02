@@ -49,11 +49,10 @@ $(NAME): $(OBJ)
 clean:
 	@make clean -C $(LIBDIR)
 	@/bin/rm -f $(OBJ) *~
-	@echo object files are removed
 
 fclean: clean
 	@make fclean -C $(LIBDIR)
 	@/bin/rm -f $(NAME)
-	@echo libftprintf.a is removed
+	@echo libftprintf.a has been removed
 
 re: fclean all

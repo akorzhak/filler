@@ -19,12 +19,6 @@
 
 # define BOARD_OFFSET 4
 # define PIECE_OFFSET 0
-# define USAGE "USAGE: ./resources/filler_vm -f resources/maps/[map00/map01/\
-				map02/map03] -p[1/2] ./[name].filler -p[2/1] ./resources/\
-				players/[name].filler"
-# define ERROR "Something went wrong"
-# define FIRST_LINES "$$$ exec p"
-# define MY_BOT_NAME "akorzhak.filler"
 
 typedef struct		s_grid
 {
@@ -50,8 +44,15 @@ typedef struct		s_filler
 	t_coordinate	coord;
 }					t_filler;
 
-int					main(void);
-void				display_error_message(char *message);
-void				display_message(char *message);
+void				init_filler(t_filler *f);
+void				identify_bots(t_filler *f);
+void				init_distance_board(t_filler *f);
+int					skip_the_line(void);
+void 				identify_grid_dimensions(t_grid *grid);
+void				fill_the_grid_data(t_grid *grid, int offset);
+void				free_the_grid_data(t_grid *grid);
+void				form_manhattan_distance_board(t_filler *f);
+void				place_a_piece(t_filler *f);
+void				free_memory(t_filler *f);
 
 #endif

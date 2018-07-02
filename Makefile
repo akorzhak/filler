@@ -28,7 +28,7 @@ SRCDIR = src
 
 PLAYERSDIR = ./resources/players/
 
-SRC = main.c messages.c
+SRC = main.c init.c free.c parsing.c manhattan_algo.c place.c util.c
 
 OBJ = $(SRC:.c=.o)
 
