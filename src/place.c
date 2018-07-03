@@ -56,7 +56,7 @@ void	attempt_to_place_a_piece(t_filler *f, int x, int y)
 		{
 			if (f->piece->data[i][j] == '*')
 			{
-				if (f->board->data[y + i][x + j] == f->my_bot 
+				if (f->board->data[y + i][x + j] == f->my_bot
 					|| f->board->data[y + i][x + j] == f->my_bot + 32)
 					my_bot_cell++;
 				else if (f->board->data[y + i][x + j] == f->enemy_bot

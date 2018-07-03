@@ -48,7 +48,7 @@ void				init_filler(t_filler *f);
 void				identify_bots(t_filler *f);
 void				init_distance_board(t_filler *f);
 int					skip_the_line(void);
-void 				identify_grid_dimensions(t_grid *grid);
+void				identify_grid_dimensions(t_grid *grid);
 void				fill_the_grid_data(t_grid *grid, int offset);
 void				free_the_grid_data(t_grid *grid);
 void				form_manhattan_distance_board(t_filler *f);

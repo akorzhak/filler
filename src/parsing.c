@@ -12,12 +12,12 @@
 
 #include "filler.h"
 
-void 	identify_grid_dimensions(t_grid *grid)
+void	identify_grid_dimensions(t_grid *grid)
 {
 	char *line;
 	char *str;
+
 	line = NULL;
-	
 	get_next_line(0, &line);
 	str = line;
 	while (!ft_isdigit(*str))
@@ -34,9 +34,9 @@ void 	identify_grid_dimensions(t_grid *grid)
 }
 
 void	fill_the_grid_data(t_grid *grid, int offset)
-{	
-	int i;
-	char *line;
+{
+	int			i;
+	char		*line;
 	static char first_read = 1;
 
 	line = NULL;
@@ -50,11 +50,10 @@ void	fill_the_grid_data(t_grid *grid, int offset)
 	while (i < grid->rows)
 	{
 		get_next_line(0, &line);
-		
 		if (offset == PIECE_OFFSET || first_read)
 			grid->data[i] = ft_strdup(line + offset);
 		else
-		 	ft_strcpy(grid->data[i], (line + offset));
+			ft_strcpy(grid->data[i], (line + offset));
 		ft_strdel(&line);
 		i++;
 	}

@@ -12,15 +12,15 @@
 
 #include "filler.h"
 
-void		handle_game_loop(t_filler *f)
+void	handle_game_loop(t_filler *f)
 {
 	char *line;
 
 	line = NULL;
 	while (skip_the_line())
 	{
-		f->coord.dist = -1;	
-		fill_the_grid_data(f->board, BOARD_OFFSET);	
+		f->coord.dist = -1;
+		fill_the_grid_data(f->board, BOARD_OFFSET);
 		identify_grid_dimensions(f->piece);
 		fill_the_grid_data(f->piece, PIECE_OFFSET);
 		form_manhattan_distance_board(f);

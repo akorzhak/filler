@@ -21,9 +21,10 @@ void	init_filler(t_filler *f)
 	f->piece = (t_grid *)ft_memalloc(sizeof(t_grid));
 }
 
-void 	identify_bots(t_filler *f)
+void	identify_bots(t_filler *f)
 {
 	char *line;
+
 	line = NULL;
 	get_next_line(0, &line);
 	f->my_bot = ((line[10] == '1') ? 'O' : 'X');
@@ -39,7 +40,8 @@ void	init_distance_board(t_filler *f)
 	f->dist_board = (int **)ft_memalloc(sizeof(int *) * (f->board->rows + 1));
 	while (i < f->board->rows)
 	{
-		f->dist_board[i] = (int*)ft_memalloc(sizeof(int) * f->board->columns + 1);
+		f->dist_board[i] = (int *)ft_memalloc(sizeof(int)
+							* f->board->columns + 1);
 		i++;
 	}
 }

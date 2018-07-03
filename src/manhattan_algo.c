@@ -12,7 +12,7 @@
 
 #include "filler.h"
 
-int 	calculate_distance(int x, int y, t_filler *f)
+int		calculate_distance(int x, int y, t_filler *f)
 {
 	int dist;
 	int min_dist;
@@ -49,7 +49,7 @@ void	form_manhattan_distance_board(t_filler *f)
 	{
 		x = 0;
 		while (x < f->board->columns)
-		{	
+		{
 			f->dist_board[y][x] = calculate_distance(x, y, f);
 			x++;
 		}
