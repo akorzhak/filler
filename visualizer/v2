@@ -1,0 +1,2 @@
+#!/bin/bash
+sed 's/\got//g' | tr "x" "🍃" | tr "X" "🍀" | tr "o" "🌺" | tr "O" "🌸"
